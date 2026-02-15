@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.py[cod]
+*.sqlite3
+db.sqlite3
+
+# Virtual Environment
+venv/
+env/
+bibliobay_backend/venv/
+
+# Media
+bibliobay_backend/media/
+
+# Node
+node_modules/
+
+# IDE
+.vscode/
+.idea/
