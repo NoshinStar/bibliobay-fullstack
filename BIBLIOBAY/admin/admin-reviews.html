@@ -1,0 +1,766 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <title>Review Management | BiblioBay Admin</title>
+  <style>
+    :root {
+      --primary-color: #4caf50;
+      --secondary-color: #93987c;
+      --accent-color: #385b64;
+      --light-bg: #f8f9fa;
+      --sidebar-width: 250px;
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: var(--light-bg);
+    }
+    
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      width: var(--sidebar-width);
+      background-color: var(--accent-color);
+      padding-top: 20px;
+      z-index: 1000;
+      transition: all 0.3s;
+    }
+    
+    .sidebar-header {
+      text-align: center;
+      padding: 0 15px 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .sidebar-header h3 {
+      color: white;
+      margin: 10px 0 0;
+      font-weight: 600;
+    }
+    
+    .sidebar-menu {
+      padding: 20px 0;
+    }
+    
+    .sidebar-menu .nav-link {
+      color: rgba(255, 255, 255, 0.8);
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      transition: all 0.3s;
+    }
+    
+    .sidebar-menu .nav-link:hover {
+      color: white;
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    .sidebar-menu .nav-link.active {
+      color: white;
+      background-color: rgba(255, 255, 255, 0.2);
+      border-left: 3px solid white;
+    }
+    
+    .sidebar-menu .nav-link i {
+      margin-right: 10px;
+      width: 20px;
+      text-align: center;
+    }
+    
+    .content {
+      margin-left: var(--sidebar-width);
+      padding: 20px;
+      transition: all 0.3s;
+    }
+    
+    .topbar {
+      background-color: white;
+      padding: 15px 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .page-header {
+      background-color: white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .reviews-table {
+      background-color: white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+    
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    
+    .book-img {
+      width: 40px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 4px;
+    }
+    
+    .toggle-sidebar {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 20px;
+      color: var(--accent-color);
+    }
+    
+    .action-buttons .btn {
+      margin-right: 5px;
+    }
+    
+    .review-rating {
+      color: #ffc107;
+    }
+    
+    .review-status {
+      font-size: 0.8rem;
+      padding: 0.25rem 0.5rem;
+    }
+    
+    .review-excerpt {
+      max-width: 200px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    @media (max-width: 768px) {
+      .sidebar {
+        margin-left: -250px;
+      }
+      
+      .sidebar.active {
+        margin-left: 0;
+      }
+      
+      .content {
+        margin-left: 0;
+      }
+      
+      .toggle-sidebar {
+        display: block;
+      }
+      
+      .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .page-header .btn {
+        margin-top: 10px;
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <i class="fas fa-book fa-2x text-white"></i>
+      <h3>BiblioBay Admin</h3>
+    </div>
+    
+    <div class="sidebar-menu">
+      <nav class="nav flex-column">
+        <a class="nav-link" href="admin-dashboard.html">
+          <i class="fas fa-tachometer-alt"></i> Dashboard
+        </a>
+        <a class="nav-link" href="admin-books.html">
+          <i class="fas fa-book"></i> Books
+        </a>
+        <a class="nav-link" href="admin-users.html">
+          <i class="fas fa-users"></i> Users
+        </a>
+        <a class="nav-link" href="admin-orders.html">
+          <i class="fas fa-shopping-cart"></i> Orders
+        </a>
+        <a class="nav-link" href="admin-blogs.html">
+          <i class="fas fa-blog"></i> Blogs
+        </a>
+        <a class="nav-link active" href="admin-reviews.html">
+          <i class="fas fa-star"></i> Reviews
+        </a>
+        <a class="nav-link" href="admin-settings.html">
+          <i class="fas fa-cog"></i> Settings
+        </a>
+        <a class="nav-link" href="#" id="logoutBtn">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </a>
+      </nav>
+    </div>
+  </div>
+  
+  <!-- Main Content -->
+  <div class="content">
+    <!-- Topbar -->
+    <div class="topbar">
+      <div>
+        <button class="toggle-sidebar" id="toggleSidebar">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+      <div>
+        <span class="me-3">Welcome, Admin</span>
+        <a href="./index.html" class="btn btn-sm btn-outline-secondary">
+          <i class="fas fa-external-link-alt"></i> View Site
+        </a>
+      </div>
+    </div>
+    
+    <!-- Page Header -->
+    <div class="page-header">
+      <div>
+        <h2>Review Management</h2>
+        <p class="text-muted mb-0">Manage customer reviews and ratings</p>
+      </div>
+      <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addReviewModal">
+        <i class="fas fa-plus"></i> Add New Review
+      </button>
+    </div>
+    
+    <!-- Reviews Table -->
+    <div class="reviews-table">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>All Reviews</h3>
+        <div class="d-flex">
+          <input type="text" class="form-control me-2" placeholder="Search reviews..." id="searchReviews">
+          <select class="form-select" id="ratingFilter">
+            <option value="">All Ratings</option>
+            <option value="5">5 Stars</option>
+            <option value="4">4 Stars</option>
+            <option value="3">3 Stars</option>
+            <option value="2">2 Stars</option>
+            <option value="1">1 Star</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>User</th>
+              <th>Book</th>
+              <th>Rating</th>
+              <th>Review</th>
+              <th>Date</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>#RV001</td>
+              <td>
+                <div class="d-flex align-items-center">
+                  <img src="https://picsum.photos/seed/user1/40/40.jpg" alt="User Avatar" class="user-avatar me-2">
+                  <span>John Smith</span>
+                </div>
+              </td>
+              <td>
+                <div class="d-flex align-items-center">
+                  <img src="https://picsum.photos/seed/book1/40/60.jpg" alt="Book Cover" class="book-img me-2">
+                  <span>The Great Adventure</span>
+                </div>
+              </td>
+              <td>
+                <div class="review-rating">
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                </div>
+              </td>
+              <td class="review-excerpt">This book was amazing! I couldn't put it down.</td>
+              <td>2023-06-15</td>
+              <td><span class="badge bg-success review-status">Approved</span></td>
+              <td class="action-buttons">
+                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#viewReviewModal">
+                  <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#editReviewModal">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-danger">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td>#RV002</td>
+              <td>
+                <div class="d-flex align-items-center">
+                  <img src="https://picsum.photos/seed/user2/40/40.jpg" alt="User Avatar" class="user-avatar me-2">
+                  <span>Jane Doe</span>
+                </div>
+              </td>
+              <td>
+                <div class="d-flex align-items-center">
+                  <img src="https://picsum.photos/seed/book2/40/60.jpg" alt="Book Cover" class="book-img me-2">
+                  <span>Science Explained</span>
+                </div>
+              </td>
+              <td>
+                <div class="review-rating">
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="far fa-star"></i>
+                </div>
+              </td>
+              <td class="review-excerpt">Very informative and well-written. Highly recommend.</td>
+              <td>2023-06-14</td>
+              <td><span class="badge bg-success review-status">Approved</span></td>
+              <td class="action-buttons">
+                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#viewReviewModal">
+                  <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#editReviewModal">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-danger">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td>#RV003</td>
+              <td>
+                <div class="d-flex align-items-center">
+                  <img src="https://picsum.photos/seed/user3/40/40.jpg" alt="User Avatar" class="user-avatar me-2">
+                  <span>Robert Johnson</span>
+                </div>
+              </td>
+              <td>
+                <div class="d-flex align-items-center">
+                  <img src="https://picsum.photos/seed/book3/40/60.jpg" alt="Book Cover" class="book-img me-2">
+                  <span>Technology Today</span>
+                </div>
+              </td>
+              <td>
+                <div class="review-rating">
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="far fa-star"></i>
+                  <i class="far fa-star"></i>
+                </div>
+              </td>
+              <td class="review-excerpt">Decent book but could be more comprehensive.</td>
+              <td>2023-06-13</td>
+              <td><span class="badge bg-warning review-status">Pending</span></td>
+              <td class="action-buttons">
+                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#viewReviewModal">
+                  <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#editReviewModal">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-danger">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td>#RV004</td>
+              <td>
+                <div class="d-flex align-items-center">
+                  <img src="https://picsum.photos/seed/user4/40/40.jpg" alt="User Avatar" class="user-avatar me-2">
+                  <span>Emily Davis</span>
+                </div>
+              </td>
+              <td>
+                <div class="d-flex align-items-center">
+                  <img src="https://picsum.photos/seed/book4/40/60.jpg" alt="Book Cover" class="book-img me-2">
+                  <span>Biography of a Leader</span>
+                </div>
+              </td>
+              <td>
+                <div class="review-rating">
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star-half-alt"></i>
+                </div>
+              </td>
+              <td class="review-excerpt">Inspiring story of a great leader. Well researched.</td>
+              <td>2023-06-12</td>
+              <td><span class="badge bg-success review-status">Approved</span></td>
+              <td class="action-buttons">
+                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#viewReviewModal">
+                  <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#editReviewModal">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-danger">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td>#RV005</td>
+              <td>
+                <div class="d-flex align-items-center">
+                  <img src="https://picsum.photos/seed/user5/40/40.jpg" alt="User Avatar" class="user-avatar me-2">
+                  <span>Michael Wilson</span>
+                </div>
+              </td>
+              <td>
+                <div class="d-flex align-items-center">
+                  <img src="https://picsum.photos/seed/book5/40/60.jpg" alt="Book Cover" class="book-img me-2">
+                  <span>Mystery of the Lost City</span>
+                </div>
+              </td>
+              <td>
+                <div class="review-rating">
+                  <i class="fas fa-star"></i>
+                  <i class="far fa-star"></i>
+                  <i class="far fa-star"></i>
+                  <i class="far fa-star"></i>
+                  <i class="far fa-star"></i>
+                </div>
+              </td>
+              <td class="review-excerpt">Not what I expected. Plot was predictable.</td>
+              <td>2023-06-11</td>
+              <td><span class="badge bg-danger review-status">Rejected</span></td>
+              <td class="action-buttons">
+                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#viewReviewModal">
+                  <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#editReviewModal">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-danger">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+      <!-- Pagination -->
+      <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+          <li class="page-item disabled">
+            <a class="page-link" href="#" tabindex="-1">Previous</a>
+          </li>
+          <li class="page-item active"><a class="page-link" href="#">1</a></li>
+          <li class="page-item"><a class="page-link" href="#">2</a></li>
+          <li class="page-item"><a class="page-link" href="#">3</a></li>
+          <li class="page-item">
+            <a class="page-link" href="#">Next</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+  
+  <!-- Add Review Modal -->
+  <div class="modal fade" id="addReviewModal" tabindex="-1" aria-labelledby="addReviewModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addReviewModalLabel">Add New Review</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="addReviewForm">
+            <div class="mb-3">
+              <label for="reviewUser" class="form-label">User</label>
+              <select class="form-select" id="reviewUser" required>
+                <option value="">Select User</option>
+                <option value="1">John Smith</option>
+                <option value="2">Jane Doe</option>
+                <option value="3">Robert Johnson</option>
+                <option value="4">Emily Davis</option>
+                <option value="5">Michael Wilson</option>
+              </select>
+            </div>
+            
+            <div class="mb-3">
+              <label for="reviewBook" class="form-label">Book</label>
+              <select class="form-select" id="reviewBook" required>
+                <option value="">Select Book</option>
+                <option value="1">The Great Adventure</option>
+                <option value="2">Science Explained</option>
+                <option value="3">Technology Today</option>
+                <option value="4">Biography of a Leader</option>
+                <option value="5">Mystery of the Lost City</option>
+              </select>
+            </div>
+            
+            <div class="mb-3">
+              <label for="reviewRating" class="form-label">Rating</label>
+              <select class="form-select" id="reviewRating" required>
+                <option value="">Select Rating</option>
+                <option value="5">5 Stars</option>
+                <option value="4">4 Stars</option>
+                <option value="3">3 Stars</option>
+                <option value="2">2 Stars</option>
+                <option value="1">1 Star</option>
+              </select>
+            </div>
+            
+            <div class="mb-3">
+              <label for="reviewText" class="form-label">Review</label>
+              <textarea class="form-control" id="reviewText" rows="4" required></textarea>
+            </div>
+            
+            <div class="mb-3">
+              <label for="reviewDate" class="form-label">Date</label>
+              <input type="date" class="form-control" id="reviewDate" required>
+            </div>
+            
+            <div class="mb-3">
+              <label for="reviewStatus" class="form-label">Status</label>
+              <select class="form-select" id="reviewStatus" required>
+                <option value="">Select Status</option>
+                <option value="pending">Pending</option>
+                <option value="approved">Approved</option>
+                <option value="rejected">Rejected</option>
+              </select>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" id="saveReviewBtn">Save Review</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- View Review Modal -->
+  <div class="modal fade" id="viewReviewModal" tabindex="-1" aria-labelledby="viewReviewModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="viewReviewModalLabel">Review Details</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="d-flex align-items-center mb-3">
+            <img src="https://picsum.photos/seed/user1/40/40.jpg" alt="User Avatar" class="user-avatar me-3">
+            <div>
+              <h6 class="mb-0">John Smith</h6>
+              <small class="text-muted">June 15, 2023</small>
+            </div>
+          </div>
+          
+          <div class="d-flex align-items-center mb-3">
+            <img src="https://picsum.photos/seed/book1/40/60.jpg" alt="Book Cover" class="book-img me-3">
+            <div>
+              <h6 class="mb-0">The Great Adventure</h6>
+              <div class="review-rating">
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+              </div>
+            </div>
+          </div>
+          
+          <div class="mb-3">
+            <h6>Review</h6>
+            <p>This book was amazing! I couldn't put it down. The characters were well-developed and the plot was engaging from start to finish. I would definitely recommend this to anyone looking for a thrilling adventure story.</p>
+          </div>
+          
+          <div class="mb-3">
+            <h6>Status</h6>
+            <span class="badge bg-success">Approved</span>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editReviewModal" data-bs-dismiss="modal">Edit Review</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Edit Review Modal -->
+  <div class="modal fade" id="editReviewModal" tabindex="-1" aria-labelledby="editReviewModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editReviewModalLabel">Edit Review</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="editReviewForm">
+            <div class="mb-3">
+              <label for="editReviewUser" class="form-label">User</label>
+              <select class="form-select" id="editReviewUser" required>
+                <option value="">Select User</option>
+                <option value="1" selected>John Smith</option>
+                <option value="2">Jane Doe</option>
+                <option value="3">Robert Johnson</option>
+                <option value="4">Emily Davis</option>
+                <option value="5">Michael Wilson</option>
+              </select>
+            </div>
+            
+            <div class="mb-3">
+              <label for="editReviewBook" class="form-label">Book</label>
+              <select class="form-select" id="editReviewBook" required>
+                <option value="">Select Book</option>
+                <option value="1" selected>The Great Adventure</option>
+                <option value="2">Science Explained</option>
+                <option value="3">Technology Today</option>
+                <option value="4">Biography of a Leader</option>
+                <option value="5">Mystery of the Lost City</option>
+              </select>
+            </div>
+            
+            <div class="mb-3">
+              <label for="editReviewRating" class="form-label">Rating</label>
+              <select class="form-select" id="editReviewRating" required>
+                <option value="">Select Rating</option>
+                <option value="5" selected>5 Stars</option>
+                <option value="4">4 Stars</option>
+                <option value="3">3 Stars</option>
+                <option value="2">2 Stars</option>
+                <option value="1">1 Star</option>
+              </select>
+            </div>
+            
+            <div class="mb-3">
+              <label for="editReviewText" class="form-label">Review</label>
+              <textarea class="form-control" id="editReviewText" rows="4" required>This book was amazing! I couldn't put it down. The characters were well-developed and the plot was engaging from start to finish. I would definitely recommend this to anyone looking for a thrilling adventure story.</textarea>
+            </div>
+            
+            <div class="mb-3">
+              <label for="editReviewDate" class="form-label">Date</label>
+              <input type="date" class="form-control" id="editReviewDate" value="2023-06-15" required>
+            </div>
+            
+            <div class="mb-3">
+              <label for="editReviewStatus" class="form-label">Status</label>
+              <select class="form-select" id="editReviewStatus" required>
+                <option value="">Select Status</option>
+                <option value="pending">Pending</option>
+                <option value="approved" selected>Approved</option>
+                <option value="rejected">Rejected</option>
+              </select>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" id="updateReviewBtn">Update Review</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Toggle sidebar
+    document.getElementById('toggleSidebar').addEventListener('click', function() {
+      document.getElementById('sidebar').classList.toggle('active');
+    });
+    
+    // Logout functionality
+    document.getElementById('logoutBtn').addEventListener('click', function(e) {
+      e.preventDefault();
+      localStorage.removeItem('adminLoggedIn');
+      window.location.href = 'admin-login.html';
+    });
+    
+    // Check if admin is logged in
+    window.addEventListener('DOMContentLoaded', function() {
+      if (localStorage.getItem('adminLoggedIn') !== 'true') {
+        window.location.href = 'admin-login.html';
+      }
+    });
+    
+    // Save review functionality
+    document.getElementById('saveReviewBtn').addEventListener('click', function() {
+      // In a real application, this would save to a database
+      alert('Review saved successfully!');
+      bootstrap.Modal.getInstance(document.getElementById('addReviewModal')).hide();
+      document.getElementById('addReviewForm').reset();
+    });
+    
+    // Update review functionality
+    document.getElementById('updateReviewBtn').addEventListener('click', function() {
+      // In a real application, this would update in a database
+      alert('Review updated successfully!');
+      bootstrap.Modal.getInstance(document.getElementById('editReviewModal')).hide();
+    });
+    
+    // Search functionality
+    document.getElementById('searchReviews').addEventListener('input', function() {
+      const searchTerm = this.value.toLowerCase();
+      const tableRows = document.querySelectorAll('tbody tr');
+      
+      tableRows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        if (text.includes(searchTerm)) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    });
+    
+    // Rating filter functionality
+    document.getElementById('ratingFilter').addEventListener('change', function() {
+      const selectedRating = this.value;
+      const tableRows = document.querySelectorAll('tbody tr');
+      
+      tableRows.forEach(row => {
+        if (selectedRating === '') {
+          row.style.display = '';
+        } else {
+          const ratingElement = row.cells[3].querySelector('.review-rating');
+          const starCount = ratingElement.querySelectorAll('.fas.fa-star, .fas.fa-star-half-alt').length;
+          
+          if (starCount.toString() === selectedRating) {
+            row.style.display = '';
+          } else {
+            row.style.display = 'none';
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,686 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <title>Book Management | BiblioBay Admin</title>
+  <style>
+    :root {
+      --primary-color: #4caf50;
+      --secondary-color: #93987c;
+      --accent-color: #385b64;
+      --light-bg: #f8f9fa;
+      --sidebar-width: 250px;
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: var(--light-bg);
+    }
+    
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      width: var(--sidebar-width);
+      background-color: var(--accent-color);
+      padding-top: 20px;
+      z-index: 1000;
+      transition: all 0.3s;
+    }
+    
+    .sidebar-header {
+      text-align: center;
+      padding: 0 15px 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .sidebar-header h3 {
+      color: white;
+      margin: 10px 0 0;
+      font-weight: 600;
+    }
+    
+    .sidebar-menu {
+      padding: 20px 0;
+    }
+    
+    .sidebar-menu .nav-link {
+      color: rgba(255, 255, 255, 0.8);
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      transition: all 0.3s;
+    }
+    
+    .sidebar-menu .nav-link:hover {
+      color: white;
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    .sidebar-menu .nav-link.active {
+      color: white;
+      background-color: rgba(255, 255, 255, 0.2);
+      border-left: 3px solid white;
+    }
+    
+    .sidebar-menu .nav-link i {
+      margin-right: 10px;
+      width: 20px;
+      text-align: center;
+    }
+    
+    .content {
+      margin-left: var(--sidebar-width);
+      padding: 20px;
+      transition: all 0.3s;
+    }
+    
+    .topbar {
+      background-color: white;
+      padding: 15px 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .page-header {
+      background-color: white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .books-table {
+      background-color: white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+    
+    .book-img {
+      width: 50px;
+      height: 70px;
+      object-fit: cover;
+      border-radius: 4px;
+    }
+    
+    .toggle-sidebar {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 20px;
+      color: var(--accent-color);
+    }
+    
+    .action-buttons .btn {
+      margin-right: 5px;
+    }
+    
+    @media (max-width: 768px) {
+      .sidebar {
+        margin-left: -250px;
+      }
+      
+      .sidebar.active {
+        margin-left: 0;
+      }
+      
+      .content {
+        margin-left: 0;
+      }
+      
+      .toggle-sidebar {
+        display: block;
+      }
+      
+      .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .page-header .btn {
+        margin-top: 10px;
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <i class="fas fa-book fa-2x text-white"></i>
+      <h3>BiblioBay Admin</h3>
+    </div>
+    
+    <div class="sidebar-menu">
+      <nav class="nav flex-column">
+        <a class="nav-link" href="admin-dashboard.html">
+          <i class="fas fa-tachometer-alt"></i> Dashboard
+        </a>
+        <a class="nav-link active" href="admin-books.html">
+          <i class="fas fa-book"></i> Books
+        </a>
+        <a class="nav-link" href="admin-users.html">
+          <i class="fas fa-users"></i> Users
+        </a>
+        <a class="nav-link" href="admin-orders.html">
+          <i class="fas fa-shopping-cart"></i> Orders
+        </a>
+        <a class="nav-link" href="admin-blogs.html">
+          <i class="fas fa-blog"></i> Blogs
+        </a>
+        <a class="nav-link" href="admin-reviews.html">
+          <i class="fas fa-star"></i> Reviews
+        </a>
+        <a class="nav-link" href="admin-settings.html">
+          <i class="fas fa-cog"></i> Settings
+        </a>
+        <a class="nav-link" href="#" id="logoutBtn">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </a>
+      </nav>
+    </div>
+  </div>
+  
+  <!-- Main Content -->
+  <div class="content">
+    <!-- Topbar -->
+    <div class="topbar">
+      <div>
+        <button class="toggle-sidebar" id="toggleSidebar">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+      <div>
+        <span class="me-3">Welcome, Admin</span>
+        <a href="./index.html" class="btn btn-sm btn-outline-secondary">
+          <i class="fas fa-external-link-alt"></i> View Site
+        </a>
+      </div>
+    </div>
+    
+    <!-- Page Header -->
+    <div class="page-header">
+      <div>
+        <h2>Book Management</h2>
+        <p class="text-muted mb-0">Manage your bookstore's inventory</p>
+      </div>
+      <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addBookModal">
+        <i class="fas fa-plus"></i> Add New Book
+      </button>
+    </div>
+    
+    <!-- Books Table -->
+    <div class="books-table">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>All Books</h3>
+        <div class="d-flex">
+          <input type="text" class="form-control me-2" placeholder="Search books..." id="searchBooks">
+          <select class="form-select" id="categoryFilter">
+            <option value="">All Categories</option>
+            <option value="fiction">Fiction</option>
+            <option value="non-fiction">Non-Fiction</option>
+            <option value="science">Science</option>
+            <option value="technology">Technology</option>
+            <option value="biography">Biography</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Cover</th>
+              <th>Title</th>
+              <th>Author</th>
+              <th>Category</th>
+              <th>Price</th>
+              <th>Stock</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>#BK001</td>
+              <td><img src="./books/zip1/book1.jpg" alt="Book Cover" class="book-img"></td>
+              <td>The Great Adventure</td>
+              <td>John Smith</td>
+              <td>Fiction</td>
+              <td>৳ 24.99</td>
+              <td>45</td>
+              <td><span class="badge bg-success">Active</span></td>
+              <td class="action-buttons">
+                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editBookModal">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-danger">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td>#BK002</td>
+              <td><img src="./books/zip1/book2.jpg" alt="Book Cover" class="book-img"></td>
+              <td>Science Explained</td>
+              <td>Jane Doe</td>
+              <td>Science</td>
+              <td>৳ 19.99</td>
+              <td>32</td>
+              <td><span class="badge bg-success">Active</span></td>
+              <td class="action-buttons">
+                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editBookModal">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-danger">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td>#BK003</td>
+              <td><img src="./books/zip1/book3.jpg" alt="Book Cover" class="book-img"></td>
+              <td>Technology Today</td>
+              <td>Robert Johnson</td>
+              <td>Technology</td>
+              <td>৳ 29.99</td>
+              <td>0</td>
+              <td><span class="badge bg-warning">Out of Stock</span></td>
+              <td class="action-buttons">
+                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editBookModal">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-danger">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td>#BK004</td>
+              <td><img src="./books/zip1/book4.jpg" alt="Book Cover" class="book-img"></td>
+              <td>Biography of a Leader</td>
+              <td>Emily Davis</td>
+              <td>Biography</td>
+              <td>৳ 22.99</td>
+              <td>18</td>
+              <td><span class="badge bg-success">Active</span></td>
+              <td class="action-buttons">
+                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editBookModal">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-danger">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td>#BK005</td>
+              <td><img src="./books/zip1/book5.jpg" alt="Book Cover" class="book-img"></td>
+              <td>Mystery of the Lost City</td>
+              <td>Michael Wilson</td>
+              <td>Fiction</td>
+              <td>৳ 18.99</td>
+              <td>27</td>
+              <td><span class="badge bg-success">Active</span></td>
+              <td class="action-buttons">
+                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editBookModal">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-danger">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td>#BK006</td>
+              <td><img src="./books/zip2/book1.jpg" alt="Book Cover" class="book-img"></td>
+              <td>History of Bangladesh</td>
+              <td>Ahmed Rahman</td>
+              <td>History</td>
+              <td>৳ 35.99</td>
+              <td>15</td>
+              <td><span class="badge bg-success">Active</span></td>
+              <td class="action-buttons">
+                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editBookModal">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-danger">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td>#BK007</td>
+              <td><img src="./books/zip2/book2.jpg" alt="Book Cover" class="book-img"></td>
+              <td>Bangla Literature</td>
+              <td>Fatema Khatun</td>
+              <td>Literature</td>
+              <td>৳ 28.99</td>
+              <td>22</td>
+              <td><span class="badge bg-success">Active</span></td>
+              <td class="action-buttons">
+                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editBookModal">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-danger">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td>#BK008</td>
+              <td><img src="./books/zip2/book3.jpg" alt="Book Cover" class="book-img"></td>
+              <td>Programming in Python</td>
+              <td>David Wilson</td>
+              <td>Technology</td>
+              <td>৳ 42.99</td>
+              <td>8</td>
+              <td><span class="badge bg-success">Active</span></td>
+              <td class="action-buttons">
+                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editBookModal">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-danger">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td>#BK009</td>
+              <td><img src="./books/zip2/book4.jpg" alt="Book Cover" class="book-img"></td>
+              <td>The Art of Living</td>
+              <td>Sarah Johnson</td>
+              <td>Self-Help</td>
+              <td>৳ 25.99</td>
+              <td>33</td>
+              <td><span class="badge bg-success">Active</span></td>
+              <td class="action-buttons">
+                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editBookModal">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-danger">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+      <!-- Pagination -->
+      <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+          <li class="page-item disabled">
+            <a class="page-link" href="#" tabindex="-1">Previous</a>
+          </li>
+          <li class="page-item active"><a class="page-link" href="#">1</a></li>
+          <li class="page-item"><a class="page-link" href="#">2</a></li>
+          <li class="page-item"><a class="page-link" href="#">3</a></li>
+          <li class="page-item">
+            <a class="page-link" href="#">Next</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+  
+  <!-- Add Book Modal -->
+  <div class="modal fade" id="addBookModal" tabindex="-1" aria-labelledby="addBookModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addBookModalLabel">Add New Book</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="addBookForm">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="bookTitle" class="form-label">Book Title</label>
+                  <input type="text" class="form-control" id="bookTitle" required>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="bookAuthor" class="form-label">Author</label>
+                  <input type="text" class="form-control" id="bookAuthor" required>
+                </div>
+              </div>
+            </div>
+            
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="bookCategory" class="form-label">Category</label>
+                  <select class="form-select" id="bookCategory" required>
+                    <option value="">Select Category</option>
+                    <option value="fiction">Fiction</option>
+                    <option value="non-fiction">Non-Fiction</option>
+                    <option value="science">Science</option>
+                    <option value="technology">Technology</option>
+                    <option value="biography">Biography</option>
+                    <option value="history">History</option>
+                    <option value="literature">Literature</option>
+                    <option value="self-help">Self-Help</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="bookPrice" class="form-label">Price (৳)</label>
+                  <input type="number" class="form-control" id="bookPrice" step="0.01" required>
+                </div>
+              </div>
+            </div>
+            
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="bookStock" class="form-label">Stock Quantity</label>
+                  <input type="number" class="form-control" id="bookStock" required>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="bookISBN" class="form-label">ISBN</label>
+                  <input type="text" class="form-control" id="bookISBN">
+                </div>
+              </div>
+            </div>
+            
+            <div class="mb-3">
+              <label for="bookDescription" class="form-label">Description</label>
+              <textarea class="form-control" id="bookDescription" rows="3"></textarea>
+            </div>
+            
+            <div class="mb-3">
+              <label for="bookImage" class="form-label">Book Cover Image</label>
+              <input type="file" class="form-control" id="bookImage" accept="image/*">
+              <div class="form-text">Or enter the path to your book image in the zip file:</div>
+              <input type="text" class="form-control mt-2" id="bookImagePath" placeholder="./books/zip1/book1.jpg">
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" id="saveBookBtn">Save Book</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Edit Book Modal -->
+  <div class="modal fade" id="editBookModal" tabindex="-1" aria-labelledby="editBookModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editBookModalLabel">Edit Book</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="editBookForm">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="editBookTitle" class="form-label">Book Title</label>
+                  <input type="text" class="form-control" id="editBookTitle" value="The Great Adventure" required>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="editBookAuthor" class="form-label">Author</label>
+                  <input type="text" class="form-control" id="editBookAuthor" value="John Smith" required>
+                </div>
+              </div>
+            </div>
+            
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="editBookCategory" class="form-label">Category</label>
+                  <select class="form-select" id="editBookCategory" required>
+                    <option value="">Select Category</option>
+                    <option value="fiction" selected>Fiction</option>
+                    <option value="non-fiction">Non-Fiction</option>
+                    <option value="science">Science</option>
+                    <option value="technology">Technology</option>
+                    <option value="biography">Biography</option>
+                    <option value="history">History</option>
+                    <option value="literature">Literature</option>
+                    <option value="self-help">Self-Help</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="editBookPrice" class="form-label">Price (৳)</label>
+                  <input type="number" class="form-control" id="editBookPrice" value="24.99" step="0.01" required>
+                </div>
+              </div>
+            </div>
+            
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="editBookStock" class="form-label">Stock Quantity</label>
+                  <input type="number" class="form-control" id="editBookStock" value="45" required>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="editBookISBN" class="form-label">ISBN</label>
+                  <input type="text" class="form-control" id="editBookISBN" value="978-3-16-148410-0">
+                </div>
+              </div>
+            </div>
+            
+            <div class="mb-3">
+              <label for="editBookDescription" class="form-label">Description</label>
+              <textarea class="form-control" id="editBookDescription" rows="3">An exciting adventure story that takes readers on a journey through uncharted territories.</textarea>
+            </div>
+            
+            <div class="mb-3">
+              <label for="editBookImage" class="form-label">Book Cover Image</label>
+              <input type="file" class="form-control" id="editBookImage" accept="image/*">
+              <div class="form-text">Or enter the path to your book image in the zip file:</div>
+              <input type="text" class="form-control mt-2" id="editBookImagePath" value="./books/zip1/book1.jpg">
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" id="updateBookBtn">Update Book</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Toggle sidebar
+    document.getElementById('toggleSidebar').addEventListener('click', function() {
+      document.getElementById('sidebar').classList.toggle('active');
+    });
+    
+    // Logout functionality
+    document.getElementById('logoutBtn').addEventListener('click', function(e) {
+      e.preventDefault();
+      localStorage.removeItem('adminLoggedIn');
+      window.location.href = 'admin-login.html';
+    });
+    
+    // Check if admin is logged in
+    window.addEventListener('DOMContentLoaded', function() {
+      if (localStorage.getItem('adminLoggedIn') !== 'true') {
+        window.location.href = 'admin-login.html';
+      }
+    });
+    
+    // Save book functionality
+    document.getElementById('saveBookBtn').addEventListener('click', function() {
+      // In a real application, this would save to a database
+      alert('Book saved successfully!');
+      bootstrap.Modal.getInstance(document.getElementById('addBookModal')).hide();
+      document.getElementById('addBookForm').reset();
+    });
+    
+    // Update book functionality
+    document.getElementById('updateBookBtn').addEventListener('click', function() {
+      // In a real application, this would update in a database
+      alert('Book updated successfully!');
+      bootstrap.Modal.getInstance(document.getElementById('editBookModal')).hide();
+    });
+    
+    // Search functionality
+    document.getElementById('searchBooks').addEventListener('input', function() {
+      const searchTerm = this.value.toLowerCase();
+      const tableRows = document.querySelectorAll('tbody tr');
+      
+      tableRows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        if (text.includes(searchTerm)) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    });
+    
+    // Category filter functionality
+    document.getElementById('categoryFilter').addEventListener('change', function() {
+      const selectedCategory = this.value.toLowerCase();
+      const tableRows = document.querySelectorAll('tbody tr');
+      
+      tableRows.forEach(row => {
+        if (selectedCategory === '') {
+          row.style.display = '';
+        } else {
+          const category = row.cells[4].textContent.toLowerCase();
+          if (category === selectedCategory) {
+            row.style.display = '';
+          } else {
+            row.style.display = 'none';
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>

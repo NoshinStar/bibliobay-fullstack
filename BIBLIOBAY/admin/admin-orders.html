@@ -1,0 +1,921 @@
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <title>Order Management | BiblioBay Admin</title>
+  <style>
+    :root {
+      --primary-color: #4caf50;
+      --secondary-color: #93987c;
+      --accent-color: #385b64;
+      --light-bg: #f8f9fa;
+      --sidebar-width: 250px;
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: var(--light-bg);
+    }
+    
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      width: var(--sidebar-width);
+      background-color: var(--accent-color);
+      padding-top: 20px;
+      z-index: 1000;
+      transition: all 0.3s;
+    }
+    
+    .sidebar-header {
+      text-align: center;
+      padding: 0 15px 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .sidebar-header h3 {
+      color: white;
+      margin: 10px 0 0;
+      font-weight: 600;
+    }
+    
+    .sidebar-menu {
+      padding: 20px 0;
+    }
+    
+    .sidebar-menu .nav-link {
+      color: rgba(255, 255, 255, 0.8);
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      transition: all 0.3s;
+    }
+    
+    .sidebar-menu .nav-link:hover {
+      color: white;
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    .sidebar-menu .nav-link.active {
+      color: white;
+      background-color: rgba(255, 255, 255, 0.2);
+      border-left: 3px solid white;
+    }
+    
+    .sidebar-menu .nav-link i {
+      margin-right: 10px;
+      width: 20px;
+      text-align: center;
+    }
+    
+    .content {
+      margin-left: var(--sidebar-width);
+      padding: 20px;
+      transition: all 0.3s;
+    }
+    
+    .topbar {
+      background-color: white;
+      padding: 15px 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .page-header {
+      background-color: white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .orders-table {
+      background-color: white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+    
+    .toggle-sidebar {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 20px;
+      color: var(--accent-color);
+    }
+    
+    .action-buttons .btn {
+      margin-right: 5px;
+    }
+    
+    .order-status {
+      font-size: 0.8rem;
+      padding: 0.25rem 0.5rem;
+    }
+    
+    .order-products {
+      max-width: 200px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    @media (max-width: 768px) {
+      .sidebar {
+        margin-left: -250px;
+      }
+      
+      .sidebar.active {
+        margin-left: 0;
+      }
+      
+      .content {
+        margin-left: 0;
+      }
+      
+      .toggle-sidebar {
+        display: block;
+      }
+      
+      .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .page-header .btn {
+        margin-top: 10px;
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <i class="fas fa-book fa-2x text-white"></i>
+      <h3>BiblioBay Admin</h3>
+    </div>
+    
+    <div class="sidebar-menu">
+      <nav class="nav flex-column">
+        <a class="nav-link" href="admin-dashboard.html">
+          <i class="fas fa-tachometer-alt"></i> Dashboard
+        </a>
+        <a class="nav-link" href="admin-books.html">
+          <i class="fas fa-book"></i> Books
+        </a>
+        <a class="nav-link" href="admin-users.html">
+          <i class="fas fa-users"></i> Users
+        </a>
+        <a class="nav-link active" href="admin-orders.html">
+          <i class="fas fa-shopping-cart"></i> Orders
+        </a>
+        <a class="nav-link" href="admin-blogs.html">
+          <i class="fas fa-blog"></i> Blogs
+        </a>
+        <a class="nav-link" href="admin-reviews.html">
+          <i class="fas fa-star"></i> Reviews
+        </a>
+        <a class="nav-link" href="admin-settings.html">
+          <i class="fas fa-cog"></i> Settings
+        </a>
+        <a class="nav-link" href="#" id="logoutBtn">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </a>
+      </nav>
+    </div>
+  </div>
+  
+  <!-- Main Content -->
+  <div class="content">
+    <!-- Topbar -->
+    <div class="topbar">
+      <div>
+        <button class="toggle-sidebar" id="toggleSidebar">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+      <div>
+        <span class="me-3">Welcome, Admin</span>
+        <a href="./index.html" class="btn btn-sm btn-outline-secondary">
+          <i class="fas fa-external-link-alt"></i> View Site
+        </a>
+      </div>
+    </div>
+    
+    <!-- Page Header -->
+    <div class="page-header">
+      <div>
+        <h2>Order Management</h2>
+        <p class="text-muted mb-0">Manage customer orders and shipping</p>
+      </div>
+      <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addOrderModal">
+        <i class="fas fa-plus"></i> Add New Order
+      </button>
+    </div>
+    
+    <!-- Orders Table -->
+    <div class="orders-table">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>All Orders</h3>
+        <div class="d-flex">
+          <input type="text" class="form-control me-2" placeholder="Search orders..." id="searchOrders">
+          <select class="form-select" id="statusFilter">
+            <option value="">All Statuses</option>
+            <option value="pending">Pending</option>
+            <option value="processing">Processing</option>
+            <option value="shipped">Shipped</option>
+            <option value="delivered">Delivered</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Customer</th>
+              <th>Products</th>
+              <th>Date</th>
+              <th>Total</th>
+              <th>Payment</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>#ORD-001</td>
+              <td>John Smith</td>
+              <td class="order-products">The Great Adventure, Science Explained</td>
+              <td>2023-06-15</td>
+              <td>$45.99</td>
+              <td><span class="badge bg-success">Paid</span></td>
+              <td><span class="badge bg-success order-status">Delivered</span></td>
+              <td class="action-buttons">
+                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#viewOrderModal">
+                  <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#editOrderModal">
+                  <i class="fas fa-edit"></i>
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td>#ORD-002</td>
+              <td>Jane Doe</td>
+              <td class="order-products">Technology Today</td>
+              <td>2023-06-14</td>
+              <td>$32.50</td>
+              <td><span class="badge bg-success">Paid</span></td>
+              <td><span class="badge bg-warning order-status">Processing</span></td>
+              <td class="action-buttons">
+                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#viewOrderModal">
+                  <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#editOrderModal">
+                  <i class="fas fa-edit"></i>
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td>#ORD-003</td>
+              <td>Robert Johnson</td>
+              <td class="order-products">Biography of a Leader, Mystery of the Lost City</td>
+              <td>2023-06-13</td>
+              <td>$78.25</td>
+              <td><span class="badge bg-danger">Failed</span></td>
+              <td><span class="badge bg-danger order-status">Cancelled</span></td>
+              <td class="action-buttons">
+                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#viewOrderModal">
+                  <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#editOrderModal">
+                  <i class="fas fa-edit"></i>
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td>#ORD-004</td>
+              <td>Emily Davis</td>
+              <td class="order-products">Science Explained</td>
+              <td>2023-06-12</td>
+              <td>$56.75</td>
+              <td><span class="badge bg-success">Paid</span></td>
+              <td><span class="badge bg-info order-status">Shipped</span></td>
+              <td class="action-buttons">
+                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#viewOrderModal">
+                  <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#editOrderModal">
+                  <i class="fas fa-edit"></i>
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td>#ORD-005</td>
+              <td>Michael Wilson</td>
+              <td class="order-products">The Great Adventure</td>
+              <td>2023-06-11</td>
+              <td>$29.99</td>
+              <td><span class="badge bg-warning">Pending</span></td>
+              <td><span class="badge bg-secondary order-status">Pending</span></td>
+              <td class="action-buttons">
+                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#viewOrderModal">
+                  <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#editOrderModal">
+                  <i class="fas fa-edit"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+      <!-- Pagination -->
+      <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+          <li class="page-item disabled">
+            <a class="page-link" href="#" tabindex="-1">Previous</a>
+          </li>
+          <li class="page-item active"><a class="page-link" href="#">1</a></li>
+          <li class="page-item"><a class="page-link" href="#">2</a></li>
+          <li class="page-item"><a class="page-link" href="#">3</a></li>
+          <li class="page-item">
+            <a class="page-link" href="#">Next</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+  
+  <!-- Add Order Modal -->
+  <div class="modal fade" id="addOrderModal" tabindex="-1" aria-labelledby="addOrderModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addOrderModalLabel">Add New Order</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="addOrderForm">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="orderCustomer" class="form-label">Customer</label>
+                  <select class="form-select" id="orderCustomer" required>
+                    <option value="">Select Customer</option>
+                    <option value="1">John Smith</option>
+                    <option value="2">Jane Doe</option>
+                    <option value="3">Robert Johnson</option>
+                    <option value="4">Emily Davis</option>
+                    <option value="5">Michael Wilson</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="orderDate" class="form-label">Order Date</label>
+                  <input type="date" class="form-control" id="orderDate" required>
+                </div>
+              </div>
+            </div>
+            
+            <div class="mb-3">
+              <label for="orderProducts" class="form-label">Products</label>
+              <div class="border rounded p-3 mb-2">
+                <div class="row mb-2">
+                  <div class="col-md-5">
+                    <select class="form-select product-select">
+                      <option value="">Select Product</option>
+                      <option value="1">The Great Adventure - $24.99</option>
+                      <option value="2">Science Explained - $19.99</option>
+                      <option value="3">Technology Today - $29.99</option>
+                      <option value="4">Biography of a Leader - $22.99</option>
+                      <option value="5">Mystery of the Lost City - $18.99</option>
+                    </select>
+                  </div>
+                  <div class="col-md-3">
+                    <input type="number" class="form-control product-quantity" placeholder="Qty" min="1" value="1">
+                  </div>
+                  <div class="col-md-3">
+                    <input type="text" class="form-control product-price" placeholder="Price" readonly>
+                  </div>
+                  <div class="col-md-1">
+                    <button type="button" class="btn btn-danger btn-sm remove-product">
+                      <i class="fas fa-times"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <button type="button" class="btn btn-sm btn-outline-primary" id="addProductBtn">
+                <i class="fas fa-plus"></i> Add Product
+              </button>
+            </div>
+            
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="orderPayment" class="form-label">Payment Method</label>
+                  <select class="form-select" id="orderPayment" required>
+                    <option value="">Select Payment Method</option>
+                    <option value="credit-card">Credit Card</option>
+                    <option value="paypal">PayPal</option>
+                    <option value="bank-transfer">Bank Transfer</option>
+                    <option value="cash-on-delivery">Cash on Delivery</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="orderStatus" class="form-label">Order Status</label>
+                  <select class="form-select" id="orderStatus" required>
+                    <option value="">Select Status</option>
+                    <option value="pending">Pending</option>
+                    <option value="processing">Processing</option>
+                    <option value="shipped">Shipped</option>
+                    <option value="delivered">Delivered</option>
+                    <option value="cancelled">Cancelled</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            
+            <div class="mb-3">
+              <label for="orderAddress" class="form-label">Shipping Address</label>
+              <textarea class="form-control" id="orderAddress" rows="2" required></textarea>
+            </div>
+            
+            <div class="mb-3">
+              <label for="orderNotes" class="form-label">Order Notes</label>
+              <textarea class="form-control" id="orderNotes" rows="2"></textarea>
+            </div>
+            
+            <div class="mb-3">
+              <div class="d-flex justify-content-end">
+                <div>
+                  <h5>Subtotal: $<span id="subtotal">0.00</span></h5>
+                  <h5>Shipping: $<span id="shipping">5.00</span></h5>
+                  <h5>Tax: $<span id="tax">0.00</span></h5>
+                  <h4>Total: $<span id="total">0.00</span></h4>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" id="saveOrderBtn">Save Order</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- View Order Modal -->
+  <div class="modal fade" id="viewOrderModal" tabindex="-1" aria-labelledby="viewOrderModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="viewOrderModalLabel">Order Details</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row mb-4">
+            <div class="col-md-6">
+              <h5>Order Information</h5>
+              <p><strong>Order ID:</strong> #ORD-001</p>
+              <p><strong>Order Date:</strong> June 15, 2023</p>
+              <p><strong>Payment Method:</strong> Credit Card</p>
+              <p><strong>Payment Status:</strong> <span class="badge bg-success">Paid</span></p>
+              <p><strong>Order Status:</strong> <span class="badge bg-success">Delivered</span></p>
+            </div>
+            <div class="col-md-6">
+              <h5>Customer Information</h5>
+              <p><strong>Name:</strong> John Smith</p>
+              <p><strong>Email:</strong> john.smith@example.com</p>
+              <p><strong>Phone:</strong> +1 (555) 123-4567</p>
+              <p><strong>Address:</strong> 123 Main St, New York, NY 10001</p>
+            </div>
+          </div>
+          
+          <h5>Order Items</h5>
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>Price</th>
+                  <th>Quantity</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>The Great Adventure</td>
+                  <td>$24.99</td>
+                  <td>1</td>
+                  <td>$24.99</td>
+                </tr>
+                <tr>
+                  <td>Science Explained</td>
+                  <td>$19.99</td>
+                  <td>1</td>
+                  <td>$19.99</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+          <div class="d-flex justify-content-end mt-3">
+            <div>
+              <p><strong>Subtotal:</strong> $44.98</p>
+              <p><strong>Shipping:</strong> $5.00</p>
+              <p><strong>Tax:</strong> $1.01</p>
+              <h4><strong>Total:</strong> $50.99</h4>
+            </div>
+          </div>
+          
+          <div class="mt-3">
+            <h5>Order Notes</h5>
+            <p>Please deliver between 9 AM and 5 PM.</p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editOrderModal" data-bs-dismiss="modal">Edit Order</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Edit Order Modal -->
+  <div class="modal fade" id="editOrderModal" tabindex="-1" aria-labelledby="editOrderModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editOrderModalLabel">Edit Order</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="editOrderForm">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="editOrderCustomer" class="form-label">Customer</label>
+                  <select class="form-select" id="editOrderCustomer" required>
+                    <option value="">Select Customer</option>
+                    <option value="1" selected>John Smith</option>
+                    <option value="2">Jane Doe</option>
+                    <option value="3">Robert Johnson</option>
+                    <option value="4">Emily Davis</option>
+                    <option value="5">Michael Wilson</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="editOrderDate" class="form-label">Order Date</label>
+                  <input type="date" class="form-control" id="editOrderDate" value="2023-06-15" required>
+                </div>
+              </div>
+            </div>
+            
+            <div class="mb-3">
+              <label for="editOrderProducts" class="form-label">Products</label>
+              <div class="border rounded p-3 mb-2">
+                <div class="row mb-2">
+                  <div class="col-md-5">
+                    <select class="form-select product-select">
+                      <option value="1" selected>The Great Adventure - $24.99</option>
+                      <option value="2">Science Explained - $19.99</option>
+                      <option value="3">Technology Today - $29.99</option>
+                      <option value="4">Biography of a Leader - $22.99</option>
+                      <option value="5">Mystery of the Lost City - $18.99</option>
+                    </select>
+                  </div>
+                  <div class="col-md-3">
+                    <input type="number" class="form-control product-quantity" placeholder="Qty" min="1" value="1">
+                  </div>
+                  <div class="col-md-3">
+                    <input type="text" class="form-control product-price" placeholder="Price" value="$24.99" readonly>
+                  </div>
+                  <div class="col-md-1">
+                    <button type="button" class="btn btn-danger btn-sm remove-product">
+                      <i class="fas fa-times"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="row mb-2">
+                  <div class="col-md-5">
+                    <select class="form-select product-select">
+                      <option value="1">The Great Adventure - $24.99</option>
+                      <option value="2" selected>Science Explained - $19.99</option>
+                      <option value="3">Technology Today - $29.99</option>
+                      <option value="4">Biography of a Leader - $22.99</option>
+                      <option value="5">Mystery of the Lost City - $18.99</option>
+                    </select>
+                  </div>
+                  <div class="col-md-3">
+                    <input type="number" class="form-control product-quantity" placeholder="Qty" min="1" value="1">
+                  </div>
+                  <div class="col-md-3">
+                    <input type="text" class="form-control product-price" placeholder="Price" value="$19.99" readonly>
+                  </div>
+                  <div class="col-md-1">
+                    <button type="button" class="btn btn-danger btn-sm remove-product">
+                      <i class="fas fa-times"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <button type="button" class="btn btn-sm btn-outline-primary" id="editAddProductBtn">
+                <i class="fas fa-plus"></i> Add Product
+              </button>
+            </div>
+            
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="editOrderPayment" class="form-label">Payment Method</label>
+                  <select class="form-select" id="editOrderPayment" required>
+                    <option value="">Select Payment Method</option>
+                    <option value="credit-card" selected>Credit Card</option>
+                    <option value="paypal">PayPal</option>
+                    <option value="bank-transfer">Bank Transfer</option>
+                    <option value="cash-on-delivery">Cash on Delivery</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="editOrderStatus" class="form-label">Order Status</label>
+                  <select class="form-select" id="editOrderStatus" required>
+                    <option value="">Select Status</option>
+                    <option value="pending">Pending</option>
+                    <option value="processing">Processing</option>
+                    <option value="shipped">Shipped</option>
+                    <option value="delivered" selected>Delivered</option>
+                    <option value="cancelled">Cancelled</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            
+            <div class="mb-3">
+              <label for="editOrderAddress" class="form-label">Shipping Address</label>
+              <textarea class="form-control" id="editOrderAddress" rows="2" required>123 Main St, New York, NY 10001</textarea>
+            </div>
+            
+            <div class="mb-3">
+              <label for="editOrderNotes" class="form-label">Order Notes</label>
+              <textarea class="form-control" id="editOrderNotes" rows="2">Please deliver between 9 AM and 5 PM.</textarea>
+            </div>
+            
+            <div class="mb-3">
+              <div class="d-flex justify-content-end">
+                <div>
+                  <h5>Subtotal: $<span id="editSubtotal">44.98</span></h5>
+                  <h5>Shipping: $<span id="editShipping">5.00</span></h5>
+                  <h5>Tax: $<span id="editTax">1.01</span></h5>
+                  <h4>Total: $<span id="editTotal">50.99</span></h4>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" id="updateOrderBtn">Update Order</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Toggle sidebar
+    document.getElementById('toggleSidebar').addEventListener('click', function() {
+      document.getElementById('sidebar').classList.toggle('active');
+    });
+    
+    // Logout functionality
+    document.getElementById('logoutBtn').addEventListener('click', function(e) {
+      e.preventDefault();
+      localStorage.removeItem('adminLoggedIn');
+      window.location.href = 'admin-login.html';
+    });
+    
+    // Check if admin is logged in
+    window.addEventListener('DOMContentLoaded', function() {
+      if (localStorage.getItem('adminLoggedIn') !== 'true') {
+        window.location.href = 'admin-login.html';
+      }
+    });
+    
+    // Save order functionality
+    document.getElementById('saveOrderBtn').addEventListener('click', function() {
+      // In a real application, this would save to a database
+      alert('Order saved successfully!');
+      bootstrap.Modal.getInstance(document.getElementById('addOrderModal')).hide();
+      document.getElementById('addOrderForm').reset();
+    });
+    
+    // Update order functionality
+    document.getElementById('updateOrderBtn').addEventListener('click', function() {
+      // In a real application, this would update in a database
+      alert('Order updated successfully!');
+      bootstrap.Modal.getInstance(document.getElementById('editOrderModal')).hide();
+    });
+    
+    // Search functionality
+    document.getElementById('searchOrders').addEventListener('input', function() {
+      const searchTerm = this.value.toLowerCase();
+      const tableRows = document.querySelectorAll('tbody tr');
+      
+      tableRows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        if (text.includes(searchTerm)) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    });
+    
+    // Status filter functionality
+    document.getElementById('statusFilter').addEventListener('change', function() {
+      const selectedStatus = this.value.toLowerCase();
+      const tableRows = document.querySelectorAll('tbody tr');
+      
+      tableRows.forEach(row => {
+        if (selectedStatus === '') {
+          row.style.display = '';
+        } else {
+          const status = row.cells[6].textContent.toLowerCase();
+          if (status.includes(selectedStatus)) {
+            row.style.display = '';
+          } else {
+            row.style.display = 'none';
+          }
+        }
+      });
+    });
+    
+    // Add product functionality for add order modal
+    document.getElementById('addProductBtn').addEventListener('click', function() {
+      const productContainer = document.querySelector('#addOrderModal .border.rounded.p-3');
+      const newRow = document.createElement('div');
+      newRow.className = 'row mb-2';
+      newRow.innerHTML = `
+        <div class="col-md-5">
+          <select class="form-select product-select">
+            <option value="">Select Product</option>
+            <option value="1">The Great Adventure - $24.99</option>
+            <option value="2">Science Explained - $19.99</option>
+            <option value="3">Technology Today - $29.99</option>
+            <option value="4">Biography of a Leader - $22.99</option>
+            <option value="5">Mystery of the Lost City - $18.99</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <input type="number" class="form-control product-quantity" placeholder="Qty" min="1" value="1">
+        </div>
+        <div class="col-md-3">
+          <input type="text" class="form-control product-price" placeholder="Price" readonly>
+        </div>
+        <div class="col-md-1">
+          <button type="button" class="btn btn-danger btn-sm remove-product">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      `;
+      productContainer.appendChild(newRow);
+      
+      // Add event listeners to the new elements
+      addProductEventListeners(newRow);
+    });
+    
+    // Add product functionality for edit order modal
+    document.getElementById('editAddProductBtn').addEventListener('click', function() {
+      const productContainer = document.querySelector('#editOrderModal .border.rounded.p-3');
+      const newRow = document.createElement('div');
+      newRow.className = 'row mb-2';
+      newRow.innerHTML = `
+        <div class="col-md-5">
+          <select class="form-select product-select">
+            <option value="">Select Product</option>
+            <option value="1">The Great Adventure - $24.99</option>
+            <option value="2">Science Explained - $19.99</option>
+            <option value="3">Technology Today - $29.99</option>
+            <option value="4">Biography of a Leader - $22.99</option>
+            <option value="5">Mystery of the Lost City - $18.99</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <input type="number" class="form-control product-quantity" placeholder="Qty" min="1" value="1">
+        </div>
+        <div class="col-md-3">
+          <input type="text" class="form-control product-price" placeholder="Price" readonly>
+        </div>
+        <div class="col-md-1">
+          <button type="button" class="btn btn-danger btn-sm remove-product">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      `;
+      productContainer.appendChild(newRow);
+      
+      // Add event listeners to the new elements
+      addProductEventListeners(newRow);
+    });
+    
+    // Function to add event listeners to product rows
+    function addProductEventListeners(row) {
+      const productSelect = row.querySelector('.product-select');
+      const productQuantity = row.querySelector('.product-quantity');
+      const productPrice = row.querySelector('.product-price');
+      const removeButton = row.querySelector('.remove-product');
+      
+      // Update price when product is selected
+      productSelect.addEventListener('change', function() {
+        if (this.value) {
+          const priceText = this.options[this.selectedIndex].text.split(' - ')[1];
+          productPrice.value = priceText;
+          updateOrderTotal();
+        } else {
+          productPrice.value = '';
+          updateOrderTotal();
+        }
+      });
+      
+      // Update total when quantity changes
+      productQuantity.addEventListener('input', updateOrderTotal);
+      
+      // Remove product row
+      removeButton.addEventListener('click', function() {
+        row.remove();
+        updateOrderTotal();
+      });
+    }
+    
+    // Initialize event listeners for existing product rows
+    document.querySelectorAll('.border.rounded.p-3 .row').forEach(row => {
+      addProductEventListeners(row);
+    });
+    
+    // Function to update order total
+    function updateOrderTotal() {
+      const modal = document.activeElement.closest('.modal');
+      if (!modal) return;
+      
+      const productRows = modal.querySelectorAll('.border.rounded.p-3 .row');
+      let subtotal = 0;
+      
+      productRows.forEach(row => {
+        const priceText = row.querySelector('.product-price').value;
+        const quantity = parseInt(row.querySelector('.product-quantity').value) || 0;
+        
+        if (priceText) {
+          const price = parseFloat(priceText.replace('$', ''));
+          subtotal += price * quantity;
+        }
+      });
+      
+      const shipping = 5.00;
+      const taxRate = 0.08; // 8% tax
+      const tax = subtotal * taxRate;
+      const total = subtotal + shipping + tax;
+      
+      if (modal.id === 'addOrderModal') {
+        document.getElementById('subtotal').textContent = subtotal.toFixed(2);
+        document.getElementById('tax').textContent = tax.toFixed(2);
+        document.getElementById('total').textContent = total.toFixed(2);
+      } else if (modal.id === 'editOrderModal') {
+        document.getElementById('editSubtotal').textContent = subtotal.toFixed(2);
+        document.getElementById('editTax').textContent = tax.toFixed(2);
+        document.getElementById('editTotal').textContent = total.toFixed(2);
+      }
+    }
+  </script>
+</body>
+</html>
